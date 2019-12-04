@@ -25,11 +25,12 @@ function logger(req, res, next) {
 
 function validateUserId(id) {
   return function (req, res, next) {
-if (id && id === req.params.id) {
-
-}else {
-  res.status(400).json({ message: "invalid user id" })
-}
+    if (id && id === req.params.id) {
+      userDb.insert(id)
+      next();
+    } else {
+      res.status(400).json({ message: "invalid user id" })
+    }
   }
 }
 
