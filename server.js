@@ -4,63 +4,24 @@ const postRoutes = require('./posts/postRouter');
 
 const server = express();
 
-const userDb = require('./users/userDb');
-// const postDb = require('./posts/postDb');
-
-
+server.use(express.json());
 
 // endpoints---------------------------------------------------
 server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
 });
 
-server.use('/api/users', validateUserId(id), validateUser, userRoutes);
-server.use('/api/posts', validatePost, postRoutes);
+server.use('/api/users', userRoutes);
+server.use('/api/posts',  postRoutes);
 
 // middleware--------------------------------------------------
 server.use(logger);
-server.use(validateUser);
-server.use(validatePost);
+
 
 //custom middleware--------------------------------------------
 function logger(req, res, next) {
   console.log(`[${new Date().toISOString()}] ${req.method} to ${req.originalUrl} `
   );
-  next();
-}
-
-function validateUserId(id) {
-  return function (req, res, next) {
-    if (id && id === req.params.id) {
-      userDb.insert(id)
-      next();
-    } else {
-      res.status(400).json({ message: "invalid user id" })
-    }
-  }
-}
-
-function validateUser(req, res, next) {
-  const userBody = req.body;
-  const userName = req.body.name;
-
-  if (!userBody) {
-    res.status(400).json({ message: "missing user data" })
-  } else if (!userName) {
-    res.status(400).json({ message: "missing required name field" })
-  }
-  next();
-}
-
-function validatePost(req, res, next) {
-  const postBody = req.body
-  const text = req.body.text
-
-  if (!postBody) {
-    res.status(400).json({ message: "missing post data" })
-  } else if (!text) {
-    res.status(400).json({ message: "missing required text field" })
-  }
   next();
 }
 
