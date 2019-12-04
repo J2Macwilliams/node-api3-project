@@ -7,7 +7,9 @@ server.get('/', (req, res) => {
 });
 // middleware
 server.use(logger);
-
+server.use(validateUserId());
+server.use(validateUser);
+server.use(validatePost);
 //custom middleware
 
 function logger(req, res, next) {
@@ -16,5 +18,18 @@ function logger(req, res, next) {
   next();
 }
 
+function validateUserId() {
+  return function (req, res, next) {
+
+  }
+}
+
+function validateUser(req, res, next) {
+
+}
+
+function validatePost(req, res, next) {
+
+}
 
 module.exports = server;
