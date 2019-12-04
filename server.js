@@ -14,8 +14,8 @@ server.get('/', (req, res) => {
   res.send(`<h2>Let's write some middleware!</h2>`);
 });
 
-server.use('/api/users', validateUserId(id), userRoutes);
-server.use('/api/posts', postRoutes);
+server.use('/api/users', validateUserId(id), validateUser, userRoutes);
+server.use('/api/posts', validatePost, postRoutes);
 
 // middleware--------------------------------------------------
 server.use(logger);
@@ -41,11 +41,27 @@ function validateUserId(id) {
 }
 
 function validateUser(req, res, next) {
+  const userBody = req.body;
+  const userName = req.body.name;
 
+  if (!userBody) {
+    res.status(400).json({ message: "missing user data" })
+  } else if (!userName) {
+    res.status(400).json({ message: "missing required name field" })
+  }
+  next();
 }
 
 function validatePost(req, res, next) {
+  const postBody = req.body
+  const text = req.body.text
 
+  if (!postBody) {
+    res.status(400).json({ message: "missing post data" })
+  } else if (!text) {
+    res.status(400).json({ message: "missing required text field" })
+  }
+  next();
 }
 
 module.exports = server;
