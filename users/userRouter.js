@@ -23,11 +23,25 @@ router.post('/', validateUser, (req, res) => {
 
 router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // do your magic!
-
+  const postInfo = req.body
+  postDb.insert(postInfo)
+    .then(createPost => {
+      res.status(201).json(createPost)
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Error creating post" })
+    })
 });
 
 router.get('/', (req, res) => {
   // do your magic!
+  userDb.get(req.query)
+    .then(users => {
+      res.status(200).json(users)
+    })
+    .catch(() => {
+      res.status(500), json({ message: "Error getting the users" })
+    })
 });
 
 router.get('/:id', validateUserId, (req, res) => {
@@ -42,7 +56,7 @@ router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
 });
 
-router.put('/:id', validateUserId, (req, res) => {
+router.put('/:id', (req, res) => {
   // do your magic!
 });
 
