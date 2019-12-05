@@ -4,37 +4,45 @@ const router = express.Router();
 
 router.use(express.json())
 
-router.use(validateUserId);
-router.use(validateUser);
-router.use(validatePost);
+
 
 const userDb = require('./userDb');
+const postDb = require('../posts/postDb');
 
-router.post('/', (req, res) => {
+router.post('/', validateUser, (req, res) => {
   // do your magic!
+  const userInfo = req.body
+  userDb.insert(userInfo)
+    .then(createUser => {
+      res.status(201).json(createUser)
+    })
+    .catch(() => {
+      res.status(500).json({ message: "There was an error while saving the user to the database." })
+    })
 });
 
-router.post('/:id/posts', (req, res) => {
+router.post('/:id/posts', validateUserId, validatePost, (req, res) => {
   // do your magic!
+
 });
 
 router.get('/', (req, res) => {
   // do your magic!
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
 });
 
-router.get('/:id/posts', (req, res) => {
+router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   // do your magic!
 });
 
@@ -42,36 +50,37 @@ router.put('/:id', (req, res) => {
 
 function validateUserId(req, res, next) {
   // do your magic!
-  if (id && id === req.params.id) {
-    userDb.insert(id)
-    next();
-  } else {
-    res.status(400).json({ message: "invalid user id" })
-  }
-
+  const id = req.params.id
+  userDb.getById(id)
+    .then(id => {
+      req.user = id
+    })
+    .catch(() => {
+      res.status(400).json({ message: "invalid user id" })
+    })
+  next();
 }
 
 function validateUser(req, res, next) {
   // do your magic!
-  const userBody = req.body;
-  const userName = req.body.name;
+  const userInfo = req.body;
 
-  if (!userBody) {
+  if (Object.values(userInfo).length <= 0) {
     res.status(400).json({ message: "missing user data" })
-  } else if (!userName) {
+  } else if (!userInfo.name) {
     res.status(400).json({ message: "missing required name field" })
+  } else {
+    next();
   }
-  next();
 }
 
 function validatePost(req, res, next) {
   // do your magic!
   const postBody = req.body
-  const text = req.body.text
 
-  if (!postBody) {
+  if (Object.values(postBody).length <= 0) {
     res.status(400).json({ message: "missing post data" })
-  } else if (!text) {
+  } else if (!postBody.text) {
     res.status(400).json({ message: "missing required text field" })
   }
   next();
