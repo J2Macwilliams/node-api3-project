@@ -46,10 +46,26 @@ router.get('/', (req, res) => {
 
 router.get('/:id', validateUserId, (req, res) => {
   // do your magic!
+  const id = req.params.id
+  userDb.getById(id)
+    .then(found => {
+      res.status(200).json(found)
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Error getting requested User" })
+    })
 });
 
 router.get('/:id/posts', validateUserId, (req, res) => {
   // do your magic!
+  const id = req.params.id
+  postDb.getById(id)
+    .then(foundPost => {
+      res.status(200).json(foundPost)
+    })
+    .catch(() => {
+      res.status(500).json({ message: `Error getting post by user: ${id}` })
+    })
 });
 
 router.delete('/:id', validateUserId, (req, res) => {
