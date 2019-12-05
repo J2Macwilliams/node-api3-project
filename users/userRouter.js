@@ -5,7 +5,7 @@ const router = express.Router();
 router.use(express.json())
 
 
-
+// Pull in Databases from Users and Posts
 const userDb = require('./userDb');
 const postDb = require('../posts/postDb');
 
