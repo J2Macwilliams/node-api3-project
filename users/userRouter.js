@@ -86,7 +86,7 @@ router.delete('/:id', validateUserId, (req, res) => {
       }
     })
     .catch(() => {
-      res.status(500).json({ message: "Deleting the user not happening." })
+      res.status(500).json({ message: "Deleting the user...Not Happening!" })
     })
 });
 
