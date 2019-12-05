@@ -70,6 +70,24 @@ router.get('/:id/posts', validateUserId, (req, res) => {
 
 router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
+  const id = req.params.id
+  userDb.getById(id)
+    .then(deletedUser => {
+      if (deletedUser) {
+        userDb.remove(id, deletedUser)
+          .then(gone => {
+            res.status(200).json({ message: "The user was deleted", deletedUser })
+          })
+          .catch(() => {
+            res.status(500).json({ message: "There was an error deleting the user" })
+          })
+      } else {
+        res.status(404).json({ message: "A user with that id doesn't exist" })
+      }
+    })
+    .catch(() => {
+      res.status(500).json({ message: "Deleting the user not happening." })
+    })
 });
 
 router.put('/:id', (req, res) => {
