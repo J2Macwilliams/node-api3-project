@@ -90,8 +90,28 @@ router.delete('/:id', validateUserId, (req, res) => {
     })
 });
 
-router.put('/:id', (req, res) => {
+router.put('/:id', validateUserId, (req, res) => {
   // do your magic!
+  const id = req.params.id
+  const postInfo = req.body
+
+  userDb.getById(id)
+    .then(found => {
+      if (!postInfo) {
+        res.status(400).json({ errorMessage: "Please provide an update" })
+      } else {
+        userDb.update(id, postInfo)
+          .then(updatedUser => {
+            res.status(200).json({ message: "Wpdated with", user: `${postInfo.name}` })
+          })
+          .catch((error) => {
+            res.status(500).json({ message: "Error updating user", error })
+          })
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "The Update had problems", error })
+    })
 });
 
 //custom middleware
