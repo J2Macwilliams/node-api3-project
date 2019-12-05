@@ -102,7 +102,7 @@ router.put('/:id', validateUserId, (req, res) => {
       } else {
         userDb.update(id, postInfo)
           .then(updatedUser => {
-            res.status(200).json({ message: "Wpdated with", user: `${postInfo.name}` })
+            res.status(200).json({ message: "Updated with", user: `${postInfo.name}` })
           })
           .catch((error) => {
             res.status(500).json({ message: "Error updating user", error })
